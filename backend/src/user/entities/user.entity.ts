@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Video } from '../../video/entities/video.entity'; 
 
 @Entity()
 export class User {
@@ -13,4 +14,7 @@ export class User {
 
   @Column({ default: 'student'})
   role: string;
+
+  @OneToMany(() => Video, (video) => video.user)
+  videos: Video[];
 }

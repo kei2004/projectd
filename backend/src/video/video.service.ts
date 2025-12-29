@@ -3,13 +3,21 @@ import { Injectable } from '@nestjs/common';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { v4 as uuidv4 } from 'uuid'; // ファイル名重複防止用
+import { InjectRepository } from '@nestjs/typeorm';
+import { Video } from './entities/video.entity';
+import { Repository } from 'typeorm';
+import { User } from 'src/user/entities/user.entity';
+import { CreateVideoDto } from './dto/create-video.dto';
 
 @Injectable()
 export class VideoService {
   private s3Client: S3Client;
   private bucketName = process.env.R2_BUCKET_NAME;
 
-  constructor() {
+  constructor(
+    @InjectRepository(Video)
+    private videoRepository: Repository<Video>,
+  ) {
     this.s3Client = new S3Client({
       region: 'auto',
       endpoint: process.env.R2_ENDPOINT ?? '',
@@ -38,5 +46,18 @@ export class VideoService {
       uploadUrl,       // フロントエンドがここにPUTする
       key: uniqueFileName, // 後でDBに保存するファイル名
     };
+  }
+
+  // 動画情報をDBに保存する
+  async create(user: User, createVideoDto: CreateVideoDto): Promise<Video> {
+    const newVideo = this.videoRepository.create({
+      ...createVideoDto,
+      user: user,
+    });
+    return this.videoRepository.save(newVideo);
+  }
+
+  async findAll(): Promise<Video[]> {
+    return this.videoRepository.find({ relations: ['user'] });
   }
 }

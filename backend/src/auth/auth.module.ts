@@ -1,20 +1,26 @@
+// src/auth/auth.module.ts
 import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
-import { PassportModule } from '@nestjs/passport';
-import { UserModule } from '../user/user.module';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from '../user/entities/user.entity';
+import { PassportModule } from '@nestjs/passport'; // 忘れずにimport
+import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from './jwt.strategy';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
     UserModule,
-    PassportModule,
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
-      secret: 'SECRET_KEY_12345', // 本番では環境変数(.env)に隠すこと！
-      signOptions: { expiresIn: '60m' }, // 1時間で期限切れ
+      secret: 'secretKey123', // ※実際のコードに合わせてください
+      signOptions: { expiresIn: '1h' },
     }),
   ],
-  providers: [AuthService],
   controllers: [AuthController],
+  providers: [AuthService, JwtStrategy],
+  
+  exports: [JwtStrategy, PassportModule], 
 })
 export class AuthModule {}
