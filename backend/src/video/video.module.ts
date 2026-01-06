@@ -6,7 +6,7 @@ import { Video } from './entities/video.entity';
 import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Video]), AuthModule], // 必要に応じてVideoエンティティをここに追加
+  imports: [TypeOrmModule.forFeature([Video]), AuthModule], 
   controllers: [VideoController],
   providers: [VideoService],
 })

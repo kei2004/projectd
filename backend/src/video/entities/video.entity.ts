@@ -11,18 +11,18 @@ export class Video {
   title: string;
 
   @Column({ nullable: true })
-  description: string; // 説明文（「ここが分かりません」など）
+  description: string; 
 
   @Column()
-  videoUrl: string; // R2のURL（https://.../uuid-move.mp4）
+  videoUrl: string; 
 
   @Column()
-  genre: string; // ★追加！(Break, HipHop, Locking...)
+  genre: string;
 
   @CreateDateColumn()
-  createdAt: Date; // 投稿日
+  createdAt: Date; 
 
-  // ▼ ここが重要！「動画は必ず一人のユーザーに属する」設定
+  
   @ManyToOne(() => User, (user) => user.videos)
   user: User;
 }

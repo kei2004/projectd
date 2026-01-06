@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Video } from '../../video/entities/video.entity'; 
+import { ChatRoom } from '../../chat/entities/chat.entity';
 
 @Entity()
 export class User {
@@ -17,4 +18,10 @@ export class User {
 
   @OneToMany(() => Video, (video) => video.user)
   videos: Video[];
+
+  @OneToMany(() => ChatRoom, (chatRoom) => chatRoom.student)
+  studentChats: ChatRoom[];
+
+  @OneToMany(() => ChatRoom, (chatRoom) => chatRoom.teacher)
+  teacherChats: ChatRoom[];
 }

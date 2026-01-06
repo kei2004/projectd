@@ -1,5 +1,5 @@
 // src/video/video.controller.ts
-import { Controller, Post, Body, UseGuards, Get } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Query } from '@nestjs/common';
 import { VideoService } from './video.service';
 import { CreateVideoDto } from './dto/create-video.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -23,7 +23,7 @@ export class VideoController {
   }
 
   @Get()
-  async findAll() {
-    return this.videoService.findAll();
+  findAll(@Query('genre') genre?: string) { 
+    return this.videoService.findAll(genre);
   }
 }

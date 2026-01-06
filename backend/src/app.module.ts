@@ -7,9 +7,16 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { VideoModule } from './video/video.module';
+import { ChatModule } from './chat/chat.module';
+import {join} from "path";
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/uploads',
+    }),
     ConfigModule.forRoot({
       isGlobal: true, 
     }),
@@ -27,6 +34,7 @@ import { VideoModule } from './video/video.module';
     UserModule,
     AuthModule,
     VideoModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],

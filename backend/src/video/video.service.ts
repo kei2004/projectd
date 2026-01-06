@@ -2,7 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { v4 as uuidv4 } from 'uuid'; // ファイル名重複防止用
+import { v4 as uuidv4 } from 'uuid'; 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Video } from './entities/video.entity';
 import { Repository } from 'typeorm';
@@ -30,9 +30,7 @@ export class VideoService {
 
   // アップロード用の署名付きURLを発行する
   async generatePresignedUrl(fileName: string, fileType: string) {
-    // ファイル名が被らないようにUUIDを先頭につける
     const uniqueFileName = `${uuidv4()}-${fileName}`;
-
     const command = new PutObjectCommand({
       Bucket: this.bucketName,
       Key: uniqueFileName,
@@ -43,7 +41,7 @@ export class VideoService {
     const uploadUrl = await getSignedUrl(this.s3Client, command, { expiresIn: 60 });
 
     return {
-      uploadUrl,       // フロントエンドがここにPUTする
+      uploadUrl,       
       key: uniqueFileName, // 後でDBに保存するファイル名
     };
   }
@@ -57,7 +55,16 @@ export class VideoService {
     return this.videoRepository.save(newVideo);
   }
 
-  async findAll(): Promise<Video[]> {
-    return this.videoRepository.find({ relations: ['user'] });
+  async findAll(genre?: string) {
+    const where: any = {};
+    if (genre && genre !== 'All') {
+      where.genre = genre;
+    }
+
+    return this.videoRepository.find({
+      where: where,
+      relations: ['user'],
+      order: { id: 'DESC' },
+    });
   }
 }
